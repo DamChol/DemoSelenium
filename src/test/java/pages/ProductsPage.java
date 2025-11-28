@@ -2,6 +2,8 @@ package pages;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import org.openqa.selenium.WebDriver;
@@ -25,7 +27,7 @@ public class ProductsPage {
     })
     private List<WebElement> productElementListAll;
     
-    @FindBy(xpath=(".inventory_list .inventory_item_name "))
+    @FindBy(css=(".inventory_list .inventory_item_name "))
     private List<WebElement> productNameElementList; 
     
     @FindBy(xpath=("//div[@class='inventory_list']//div[@class='inventory_item_price']"))
@@ -61,6 +63,28 @@ public class ProductsPage {
             Products.put(i, new Product(productNameList.get(i), productPriceList.get(i), productButtonElementList.get(i)));
         }
         return Products;
+
+    }
+
+    public Product getMaxProduct() {
+
+        Double maxPriceProduct = getProductList()
+            .entrySet().stream()
+            .mapToDouble(entry -> Double.parseDouble(entry.getValue().getPrice()))
+            .max()
+            .getAsDouble();
+
+        java.util.Optional<Entry<Integer,Product>> maxProduct = getProductList().entrySet().stream().filter(el -> el.getValue().getPrice().contentEquals(String.valueOf(maxPriceProduct))).findFirst();
+        
+        if (maxProduct.isPresent()) {
+            Map.Entry<Integer, Product> entry = maxProduct.get();
+            Product znalezionyProdukt = entry.getValue(); 
+            System.out.println("Znaleziono produkt: " + znalezionyProdukt);
+            return znalezionyProdukt;
+        } else {
+            System.out.println("Nie znaleziono produktu o podanych kryteriach.");
+            return null;
+        }
 
     }
 

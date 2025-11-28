@@ -1,8 +1,6 @@
 package test;
 
 import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import org.openqa.selenium.WebElement;
 import org.testng.Assert;
@@ -29,38 +27,26 @@ public class ProductResultsTest extends BaseTest {
         // }
 
         ProductsPage productsPage = new ProductsPage(driver);
-        WebElement entryTitle = productsPage.getEntryTitleElement();
+        WebElement entryTitle = productsPage
+                .getEntryTitleElement();
 
         Assert.assertTrue(entryTitle.isDisplayed());
         Assert.assertEquals(productResult.size(), 6);
     }
 
     @Test
-    public void addProductWithHighestPriceToCart() {
+    public void addProductWithHighestPriceToCartTest() {
         String userName = "standard_user";
         String password = "secret_sauce";
-        HashMap<Integer,Product> productResult = new LoginPage(driver)
-                                        .loginUser(userName, password)
-                                        .getProductList();
+        Product productResult = new LoginPage(driver)
+              .loginUser(userName, password)
+              .getMaxProduct();
 
+              System.out.println(productResult);
 
-        Double maxPriceProduct = productResult.entrySet().stream()
-        .mapToDouble(entry -> Double.parseDouble(entry.getValue().getPrice())).max().getAsDouble();
+        Assert.assertEquals(productResult.getPrice(), "49.99");
+        Assert.assertEquals(productResult.getName(), "Sauce Labs Fleece Jacket");
 
-        java.util.Optional<Entry<Integer,Product>> maxProduct = productResult.entrySet().stream().filter(el -> el.getValue().getPrice().contentEquals(String.valueOf(maxPriceProduct))).findFirst();
-        
-        if (maxProduct.isPresent()) {
-            Map.Entry<Integer, Product> entry = maxProduct.get();
-            Product znalezionyProdukt = entry.getValue(); 
-            System.out.println("Znaleziono produkt: " + znalezionyProdukt);
-            znalezionyProdukt.getButtonWebElement().click();
-        } else {
-            System.out.println("Nie znaleziono produktu o podanych kryteriach.");
-        }
-        
-            
     }
-
-
 
 }
